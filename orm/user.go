@@ -81,8 +81,8 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 
 	var user User
-	db.Where("name = ?", name).Find(user)
-	db.Delete(user)
+	db.Where("name = ?", name).Find(&user)
+	db.Delete(&user)
 
 	fmt.Fprintf(w, "Deleted User: %v", name)
 }
@@ -101,7 +101,11 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 	email := vars["email"]
 
-	db.Update(&User{Name: name, Email: email})
+	var user User
+	db.Where("name = ?", name).Find(&user)
+	user.Email = email
+
+	db.Save(&user)
 
 	fmt.Fprintf(w, "Updated User: %v, New Email: %v", name, email)
 }
